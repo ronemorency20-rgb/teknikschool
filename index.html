@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TeknikSchool</title>
+    <link rel="icon" type="image/png" href="/logo.png" />
+
+    <!-- Load fonts as early as possible so text never flashes in the browser default font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+
+    <style>
+      /* Applied instantly, before React or any component styles load —
+         removes the "flash of unstyled HTML" (default serif font, white
+         background, no layout) that shows on slow connections. */
+      html, body {
+        margin: 0;
+        padding: 0;
+        background: #F7F8FA;
+        font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      }
+      #root {
+        min-height: 100vh;
+      }
+
+      /* Static, CSS-only loading screen — shows immediately, with zero
+         dependency on JavaScript having loaded yet. React replaces this
+         the instant it mounts, so it's only ever visible for the first
+         split second (or longer on a slow connection, where it actually
+         matters most). */
+      #initial-loader {
+        position: fixed;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 14px;
+        background: #F7F8FA;
+        z-index: 9999;
+      }
+      #initial-loader img {
+        width: 64px;
+        height: 64px;
+        object-fit: contain;
+      }
+      #initial-loader .spinner {
+        width: 32px;
+        height: 32px;
+        border: 3px solid #7C6FFF33;
+        border-top-color: #7C6FFF;
+        border-radius: 50%;
+        animation: initial-spin 0.8s linear infinite;
+      }
+      @keyframes initial-spin {
+        to { transform: rotate(360deg); }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root">
+      <div id="initial-loader">
+        <img src="/logo.png" alt="TeknikSchool" />
+        <div class="spinner"></div>
+      </div>
+    </div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>
