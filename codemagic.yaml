@@ -1,0 +1,74 @@
+workflows:
+  ios-teknikschool:
+    name: TeknikSchool iOS Build
+    max_build_duration: 60
+    instance_type: mac_mini_m2
+    environment:
+      groups:
+        - app_store_credentials   # you'll create this group in Codemagic's UI
+      vars:
+        XCODE_WORKSPACE: "ios/App/App.xcworkspace"
+        XCODE_SCHEME: "App"
+      node: latest
+      xcode: latest
+      cocoapods: default
+
+    triggering:
+      events:
+        - push
+      branch_patterns:
+        - pattern: main
+          include: true
+
+    scripts:
+      - name: Install npm dependencies
+        script: |
+          npm install
+
+      - name: Build the web app
+        script: |
+          npm run build
+
+      - name: Add/sync the iOS platform
+        script: |
+          npx cap add ios || true
+          npx cap sync ios
+
+      - name: Generate app icon and splash screen from your logo
+        script: |
+          npx capacitor-assets generate --ios
+
+      - name: Install CocoaPods dependencies
+        script: |
+          cd ios/App && pod install
+
+      - name: Set up code signing
+        script: |
+          xcode-project use-profiles
+
+      - name: Increment build number
+        script: |
+          cd $CM_BUILD_DIR/ios/App
+          agvtool new-version -all $(($(app-store-connect get-latest-app-store-build-number "$APP_STORE_APP_ID") + 1))
+
+      - name: Build the .ipa (the actual installable app file)
+        script: |
+          xcode-project build-ipa \
+            --workspace "$XCODE_WORKSPACE" \
+            --scheme "$XCODE_SCHEME"
+
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
+
+    publishing:
+      # Uncomment once you're ready to auto-send builds to TestFlight
+      # app_store_connect:
+      #   auth: integration
+      #   submit_to_testflight: true
+      email:
+        recipients:
+          - contact@teknikskool.com
+        notify:
+          success: true
+          failure: true

@@ -1,0 +1,8 @@
+{
+  "appId": "com.teknikschool.app",
+  "appName": "TeknikSchool",
+  "webDir": "dist",
+  "server": {
+    "androidScheme": "https"
+  }
+}
